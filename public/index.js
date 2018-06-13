@@ -1,8 +1,7 @@
 const app = function(){
   const url = "https://restcountries.eu/rest/v2/all";
   makeRequest(url, requestComplete);
-
-
+  // var countryArray = JSON.parse(localStorage.getItem('countryArray')) || [];
 };
 
 const makeRequest = function(url, callback){
@@ -19,31 +18,39 @@ const requestComplete = function(){
 };
 
 const populateList = function(countries){
-  const select = document.querySelector('#selector');
-
-  countries.forEach(function(country){
-    const option = document.createElement("option");
-    option.textContent = country.name;
-    select.appendChild(option);
-  });
-
-
-  select.addEventListener('change', function(){
-      const select = document.querySelector('#selector');
-      displayDetails(select.value);
-  })
+    const selector = document.querySelector('#selector');
+    selector.addEventListener('change', displayDetails);
+    countries.forEach(function(country){
+        const option = document.createElement("option");
+        option.textContent = country.name;
+        option.value = JSON.stringify(country);
+        selector.appendChild(option);
+        // const select = document.querySelector('#countries');
+    });
 };
 
-const displayDetails = function(country){
+const displayDetails = function(){
+    const country = JSON.parse(this.value);
     const ul = document.querySelector('#country-list');
     const li = document.createElement('li');
-    li.textContent = country;
-    // li.textContent = country;
-    console.log(event);
+    li.textContent = country.name + ", " + country.capital + ", " + country.population;
+
     ul.appendChild(li);
+    save(li);
 
 };
 
-// const selectCountries = function()
+var save = function (country) {
+  // this function needs to:
+  // - get the data back from local storage and parse to an array
+  const countryArray = JSON.parse(localStorage.getItem('countryList')) || [];
+  // - add the newItem to the array
+  countryArray.push(country.innerHTML);
+  // console.log(countryList);
+  // - stringify the updated array
+  const jsonStringArray = JSON.stringify(countryArray);
+  // - save it back to localstorage
+  localStorage.setItem('countryArray', jsonStringArray);
+}
 
 window.addEventListener('load', app);
